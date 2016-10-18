@@ -21,16 +21,20 @@ tdist = lambda i, j: T.sqrt(T.sqr(Ymatrix[i]-Ymatrix[j]))
 c = theano.reduce(T.add,
                   theano.map(lambda j: theano.reduce(T.add,
                                                      theano.map(lambda i: dist(i, j),
-                                                                T.arange(j))
+                                                                T.arange(j)),
+                                                     None
                                                      ),
-                             T.arange(N))
+                             T.arange(N)),
+                  None
                   )
 E = theano.reduce(T.add,
                   theano.map(lambda j: theano.reduce(T.add,
                                                      theano.map(lambda i: T.sqr(dist(i, j)-tdist(i, j))/dist(i,j),
                                                                 T.arange(j)),
+                                                     None
                                                      ),
-                             T.arange(N))
+                             T.arange(N)),
+                  None
                   )
 E = E / c
 
