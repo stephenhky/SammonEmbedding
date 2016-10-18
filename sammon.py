@@ -18,24 +18,11 @@ dist = lambda i, j: T.sqrt(T.sqr(Xmatrix[i]-Xmatrix[j]))
 tdist = lambda i, j: T.sqrt(T.sqr(Ymatrix[i]-Ymatrix[j]))
 
 # cost function
-c = theano.reduce(T.add,
-                  theano.map(lambda j: theano.reduce(T.add,
-                                                     theano.map(lambda i: dist(i, j),
-                                                                T.arange(j)),
-                                                     None
-                                                     ),
-                             T.arange(N)),
-                  None
-                  )
-E = theano.reduce(T.add,
-                  theano.map(lambda j: theano.reduce(T.add,
-                                                     theano.map(lambda i: T.sqr(dist(i, j)-tdist(i, j))/dist(i,j),
-                                                                T.arange(j)),
-                                                     None
-                                                     ),
-                             T.arange(N)),
-                  None
-                  )
+c = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: dist(i, j), T.arange(j))), T.arange(N)))
+E = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: T.sqr(dist(i, j)-tdist(i, j))/dist(i,j),
+                                                T.arange(j))),
+                     T.arange(N))
+          )
 E = E / c
 
 # gradient and second derivatives (not Hessian matrix)
