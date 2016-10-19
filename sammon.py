@@ -25,14 +25,14 @@ c = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: T.switch(T.lt(i, j),
                                      ),
                      T.arange(N))[0]
           )
-E = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: T.switch(T.lt(i, j),
+s = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: T.switch(T.lt(i, j),
                                                                    T.sqr(dist(i, j)-tdist(i, j))/dist(i,j),
                                                                    0),
                                                 T.arange(N))[0]
                                      ),
                      T.arange(N))[0]
           )
-E = E / c
+E = s / c
 
 # gradient and second derivatives (not Hessian matrix)
 gradE = T.grad(E, Ymatrix)
