@@ -25,6 +25,8 @@ E = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: T.sqr(dist(i, j)-tdist
           )
 E = E / c
 
+# Efcn = theano.function([Xmatrix, Ymatrix], E)
+
 # gradient and second derivatives (not Hessian matrix)
 gradE = T.grad(E, Ymatrix)
 divgradE = theano.map(lambda i, j: T.grad(gradE[i, j], Ymatrix[i, j]), T.arange(N), T.arange(td))
