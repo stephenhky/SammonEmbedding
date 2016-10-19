@@ -15,6 +15,7 @@ N, d = Xmatrix.shape
 _, td = Ymatrix.shape
 
 # distance function (Euclidean distance)
+# TODO: precompute it
 dist = lambda i, j: T.sqrt(T.sum(T.sqr(Xmatrix[i]-Xmatrix[j])))
 tdist = lambda i, j: T.sqrt(T.sum(T.sqr(Ymatrix[i]-Ymatrix[j])))
 
