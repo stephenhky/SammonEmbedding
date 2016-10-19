@@ -3,7 +3,7 @@ import theano
 import theano.tensor as T
 
 # define variables
-td = T.iscalar('td')         # target dimensions
+# td = T.iscalar('td')         # target dimensions
 mf = T.dscalar('mf')         # magic factor / learning rate
 
 # coordinate variables
@@ -12,6 +12,7 @@ Ymatrix = T.dmatrix('Ymatrix')
 
 # number of points and dimensions
 N, d = Xmatrix.shape
+_, td = Ymatrix.shape
 
 # distance function (Euclidean distance)
 dist = lambda i, j: T.sqrt(T.sum(T.sqr(Xmatrix[i]-Xmatrix[j])))
@@ -36,8 +37,8 @@ E = s / c
 
 # gradient and second derivatives (not Hessian matrix)
 gradE = T.grad(E, Ymatrix)
-divgradE = theano.map(lambda i, j: T.grad(gradE[i, j], Ymatrix[i, j]), T.arange(N), T.arange(td))
-#
+divgradE, _ = theano.map(lambda i, j: T.grad(gradE[i, j], Ymatrix[i, j]), T.arange(N), T.arange(td))
+
 # # update routine
 updated_Ymatrix = Ymatrix - mf * gradE / divgradE
 updatefcn = theano.funcion([Xmatrix, Ymatrix, mf], updated_Ymatrix)
