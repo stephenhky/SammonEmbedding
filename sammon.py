@@ -11,17 +11,17 @@ Xmatrix = T.dmatrix('Xmatrix')
 Ymatrix = T.dmatrix('Ymatrix')
 
 # number of points and dimensions
-N, d = T.shape(Xmatrix)
+N, d = Xmatrix.shape
 
 # distance function (Euclidean distance)
 dist = lambda i, j: T.sqrt(T.sqr(Xmatrix[i]-Xmatrix[j]))
 tdist = lambda i, j: T.sqrt(T.sqr(Ymatrix[i]-Ymatrix[j]))
 
 # cost function
-c = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: dist(i, j), T.arange(j))), T.arange(N)))
+c = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: dist(i, j), T.arange(j))[0]), T.arange(N))[0])
 E = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: T.sqr(dist(i, j)-tdist(i, j))/dist(i,j),
-                                                T.arange(j))),
-                     T.arange(N))
+                                                T.arange(j))[0]),
+                     T.arange(N))[0]
           )
 E = E / c
 
