@@ -18,12 +18,16 @@ dist = lambda i, j: T.sqrt(T.sum(T.sqr(Xmatrix[i]-Xmatrix[j])))
 tdist = lambda i, j: T.sqrt(T.sum(T.sqr(Ymatrix[i]-Ymatrix[j])))
 
 # cost function
-c = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: T.switch(T.lt(i, j), dist(i, j), 0),
+c = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: T.switch(T.lt(i, j),
+                                                                   dist(i, j),
+                                                                   0),
                                                 T.arange(N))[0]
                                      ),
                      T.arange(N))[0]
           )
-E = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: T.switch(T.lt(i, j), T.sqr(dist(i, j)-tdist(i, j))/dist(i,j), 0),
+E = T.sum(theano.map(lambda j: T.sum(theano.map(lambda i: T.switch(T.lt(i, j),
+                                                                   T.sqr(dist(i, j)-tdist(i, j))/dist(i,j),
+                                                                   0),
                                                 T.arange(N))[0]
                                      ),
                      T.arange(N))[0]
