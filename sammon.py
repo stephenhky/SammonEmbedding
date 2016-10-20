@@ -3,7 +3,6 @@ import theano
 import theano.tensor as T
 
 # define variables
-# td = T.iscalar('td')         # target dimensions
 mf = T.dscalar('mf')         # magic factor / learning rate
 
 # coordinate variables
@@ -15,7 +14,6 @@ N, d = Xmatrix.shape
 _, td = Ymatrix.shape
 
 # distance function (Euclidean distance)
-# TODO: precompute it
 dist = lambda i, j: T.sqrt(T.sum(T.sqr(Xmatrix[i]-Xmatrix[j])))
 tdist = lambda i, j: T.sqrt(T.sum(T.sqr(Ymatrix[i]-Ymatrix[j])))
 
