@@ -9,24 +9,29 @@ mf = T.dscalar('mf')         # magic factor / learning rate
 Xmatrix = T.dmatrix('Xmatrix')
 Ymatrix = T.dmatrix('Ymatrix')
 
-# number of points and dimensions
-N, d = Xmatrix.shape
-_, td = Ymatrix.shape
+# number of points and dimensions (user specify them)
+N, d, td = T.iscalars('N', 'd', 'td')
+# N, d = Xmatrix.shape
+# _, td = Ymatrix.shape
 
-# distance function (Euclidean distance)
-dist = lambda i, j: T.sqrt(T.sum(T.sqr(Xmatrix[i]-Xmatrix[j])))
-tdist = lambda i, j: T.sqrt(T.sum(T.sqr(Ymatrix[i]-Ymatrix[j])))
-
-# cost function
+# grid indices
 n_grid = T.mgrid[0:N, 0:N]
 ni = n_grid[0].flatten()
 nj = n_grid[1].flatten()
-c_terms, _ = theano.scan(lambda i, j: T.switch(T.lt(i, j), dist(i, j), 0),
+
+# distance function (Euclidean distance)
+# dist = lambda i, j: T.sqrt(T.sum(T.sqr(Xmatrix[i]-Xmatrix[j])))
+# tdist = lambda i, j: T.sqrt(T.sum(T.sqr(Ymatrix[i]-Ymatrix[j])))
+
+# cost function
+c_terms, _ = theano.scan(lambda i, j: T.switch(T.lt(i, j),
+                                               T.sqrt(T.sum(T.sqr(Xmatrix[i]-Xmatrix[j]))),
+                                               0),
                          sequences=[ni, nj])
 c = T.sum(c_terms)
 
 s_term, _ = theano.scan(lambda i, j: T.switch(T.lt(i, j),
-                                              T.sqr(dist(i, j)-tdist(i, j))/dist(i, j),
+                                              T.sqr(T.sqrt(T.sum(T.sqr(Xmatrix[i]-Xmatrix[j])))-T.sqrt(T.sum(T.sqr(Ymatrix[i]-Ymatrix[j]))))/T.sqrt(T.sum(T.sqr(Xmatrix[i]-Xmatrix[j]))),
                                               0),
                         sequences=[ni, nj])
 s = T.sum(s_term)
