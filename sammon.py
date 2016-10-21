@@ -2,6 +2,8 @@ import numpy as np
 import theano
 import theano.tensor as T
 
+import numerical_gradients as ng
+
 # define variables
 mf = T.dscalar('mf')         # magic factor / learning rate
 
@@ -10,9 +12,8 @@ Xmatrix = T.dmatrix('Xmatrix')
 Ymatrix = T.dmatrix('Ymatrix')
 
 # number of points and dimensions (user specify them)
-N, d, td = T.iscalars('N', 'd', 'td')
-# N, d = Xmatrix.shape
-# _, td = Ymatrix.shape
+N, d = Xmatrix.shape
+_, td = Ymatrix.shape
 
 # grid indices
 n_grid = T.mgrid[0:N, 0:N]
@@ -38,18 +39,23 @@ s = T.sum(s_term)
 
 E = s / c
 
-# gradient
-gradEs, _ = theano.scan(lambda i: T.grad(E, Ymatrix[i]), sequences=[T.arange(N)])
+# function compilation and optimization
+Efcn = theano.function([Xmatrix, Ymatrix], E)
 
-# second derivatives (not Hessian matrix)
-imgrid = T.mgrid[0:N, 0:td]
-flattenii = imgrid[0].flatten()
-flattenjj = imgrid[1].flatten()
-divgradE, divgradupdates = theano.scan(lambda i, j, gE, Y: T.grad(gE[i, j], Y)[i, j],
-                                       sequences=[flattenii, flattenjj],
-                                       non_sequences=[gradE, Ymatrix])
-divgradE = T.reshape(divgradE, (N, td))
+# training
+def sammon_embedding(Xmat, initYmat, alpha=0.3, tol=1e-8):
+    N, d = Xmat.shape
+    NY, td = initYmat.shape
+    if N != NY:
+        raise ValueError('Number of vectors in Ymat ('+str(NY)+') is not the same as Xmat ('+str(N)+')!')
 
-# update routine
-updated_Ymatrix = Ymatrix - mf * gradE / divgradE
-updatefcn = theano.function([Xmatrix, Ymatrix, mf], updated_Ymatrix)
+    Efcn_X = lambda Ymat: Efcn(Xmat, Ymat)
+    # iteration
+    oldYmat = initYmat
+    converged = False
+    while not converged:
+        newYmat = oldYmat - alpha*ng.tensor_gradient(Efcn_X, oldYmat, tol=tol)/ng.tensor_divgrad(Efcn_X, oldYmat, tol=tol)
+        if np.all(np.abs(newYmat-oldYmat)<tol):
+            converged = True
+        oldYmat = newYmat
+    return oldYmat
