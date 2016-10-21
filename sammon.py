@@ -39,7 +39,7 @@ s = T.sum(s_term)
 E = s / c
 
 # gradient
-gradE = T.grad(E, Ymatrix)
+gradEs, _ = theano.scan(lambda i: T.grad(E, Ymatrix[i]), sequences=[T.arange(N)])
 
 # second derivatives (not Hessian matrix)
 imgrid = T.mgrid[0:N, 0:td]
