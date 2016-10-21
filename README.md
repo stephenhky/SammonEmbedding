@@ -2,7 +2,9 @@
 
 This repository is an implementation of Sammon Embedding algorithm for dimensionality reduction.
 
-The idea of Sammon Embedding algorithm is very simple: to preserve the distance between points as much as possible. More formally, we have *N* vectors defined as $$X_i$$, where $$N = 1, 2, ..., N$$.
+An example of using the embedding code is in [``tetrahedron.py``](tetrahedron.py) with a unit-length Tetrahedron as an example. The embedded points are plotted as follow:
+![Embedded tetrahedron](embedded_tetrahedron.png)
+
 
 # Reference
 
