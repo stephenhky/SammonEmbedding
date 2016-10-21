@@ -55,7 +55,7 @@ def sammon_embedding(Xmat, initYmat, alpha=0.3, tol=1e-8):
     converged = False
     while not converged:
         newYmat = oldYmat - alpha*ng.tensor_gradient(Efcn_X, oldYmat, tol=tol)/ng.tensor_divgrad(Efcn_X, oldYmat, tol=tol)
-        if np.all(np.abs(newYmat-oldYmat)<tol):
+        if np.all(np.abs(Efcn_X(newYmat)-Efcn_X(oldYmat))<tol):
             converged = True
         oldYmat = newYmat
     return oldYmat
