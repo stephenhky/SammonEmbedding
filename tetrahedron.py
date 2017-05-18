@@ -1,7 +1,16 @@
+import argparse
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 import sammon as sn
+
+argparser = argparse.ArgumentParser('Embedding points around tetrahedron.')
+argparser.add_argument('--output_figurename',
+                       default='embedded_tetrahedron.png',
+                       help='file name of the output plot')
+
+args = argparser.parse_args()
 
 tetrahedron_points = [np.array([0., 0., 0.]),
                       np.array([1., 0., 0.]),
@@ -17,5 +26,5 @@ init_points = np.concatenate([np.random.multivariate_normal(point[:2], np.eye(2)
 embed_points = sn.sammon_embedding(sampled_points, init_points, tol=1e-4)
 
 X, Y = embed_points.transpose()
-plt.plot(X, Y)
-plt.savefig('embedded_tetrahedron.png')
+plt.plot(X, Y, 'x')
+plt.savefig(args.output_figurename)
