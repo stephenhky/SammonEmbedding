@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-import sammon as sn
+import sammon_theano as sn
 import sammon_tf as sntf
 
 argparser = argparse.ArgumentParser('Embedding points around tetrahedron.')
